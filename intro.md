@@ -44,7 +44,9 @@ export class FlugSuchenComponent {
 }
 ```
 
-As this sample shows, the compiler is more strict when using AOT. That might lead to some errors when compiling. Using the feedback we get from the compilation errors, we can fix our code. To provide instant feedback during the development, we can leverage the Angular Language Service that has been introduced with Angular 2.3. It targets editors and IDE and helps them to provide Angular specific feedback and code completion for both, typescript files as well as templates. At the time of writing, the upcoming version of WebStorm supports this and there is a preview of a plugin that makes the language service available for Visual Studio Code. 
+As this sample shows, the compiler is more strict when using AOT. That might lead to some errors when compiling. Using the feedback we get from the compilation errors, we can fix our code. [Oliver Combe](https://github.com/ocombe), the author of the popular [ng2-translate](https://github.com/ocombe/ng2-translate) library, created a nice [list with things that don't work with the AOT Compiler](https://github.com/mgechev/codelyzer/issues/215). Additional information can be found [here](https://gist.github.com/chuckjaz/65dcc2fd5f4f5463e492ed0cb93bca60).
+
+To provide instant feedback during the development, we can leverage the Angular Language Service that has been introduced with Angular 2.3. It targets editors and IDE and helps them to provide Angular specific feedback and code completion for both, typescript files as well as templates. At the time of writing, the upcoming version of WebStorm supports this and there is a preview of a plugin that makes the language service available for Visual Studio Code. 
 
 
 ## Packages
