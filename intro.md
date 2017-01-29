@@ -2,7 +2,7 @@
 
 *Updated in January 2017*: After very good conversations with [Carmen Popoviciu](https://twitter.com/carmenpopoviciu?lang=de), I've updated this article to strike out some important facts and to also explain *why* the steps described here are necessary. 
 
-In the last days, I've adapted my Angular 2 sample for ahead-of-time (AOT) compilation with the template compiler. Here I'm documenting the necessary steps for such an undertaking as well as my learnings towards this. The [whole sample](https://github.com/manfredsteyer/angular-aot) can be found [here](https://github.com/manfredsteyer/angular-aot).
+In the last days, I've adapted my Angular 2 sample for ahead of time (AOT) compilation with the template compiler. Here I'm documenting the necessary steps for such an undertaking as well as my learnings towards this. The [whole sample](https://github.com/manfredsteyer/angular-aot) can be found [here](https://github.com/manfredsteyer/angular-aot).
 
 I'm subdividing this writing into two parts:
 
@@ -31,7 +31,7 @@ As mentioned [here](http://link-to-other-article), using EcmaScript 2015 or high
 
 ## Refactoring
 
-As AOT compilation does not allow for dynamic references, using ``require`` is not possible. However, thanks to the ``angular2-template-loader`` for Webpack which lines-in the templates and styles for components, we can use relative references in JIT mode anyway. In addition to that, the AOT compiler also supports relative paths:
+As AOT compilation does not allow for dynamic references, using ``require`` is not possible. However, thanks to the ``angular2-template-loader`` for Webpack which lines in the templates and styles for components, we can use relative references in JIT mode anyway. In addition to that, the AOT compiler also supports relative paths:
 
 ```
 @Component({
@@ -216,7 +216,7 @@ module.exports = {
 
 The plugins ``LoaderOptionsPlugin`` and ``UglifyJsPlugin`` reduce the bundle size to a minimum by means of [minification and tree shaking](http://moduscreate.com/webpack-2-tree-shaking-configuration/).
 
-## Webpack2-Configuration for JIT
+## Webpack2 Configuration for JIT
 
 I've also created a JIT based build. This build I'm using during development because it is much faster than an AOT based build. In principle, the webpack configuration for this looks like the one for AOT. But its entry point ``app`` points to the file ``main.jit.ts`` which is using Angular's JIT-compiler. Another difference is that it is using the ``angular2-template-loader`` which inlines component templates. In addition to that, it takes care of compiling TypeScript leveraging the ``awesome-typescript-loader``.
 
@@ -328,7 +328,7 @@ export default {
 
 Again, this configuration is pointing to the EcmaScript 5 files using the EcmaScript 2015 Module System within ``dist/unbundled-aot``. 
 
-## Build-Scripts
+## Build Scripts
 
 To build the solution for all three scenarios, I'm using the following npm scripts:
 

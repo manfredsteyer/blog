@@ -4,7 +4,7 @@ AOT speeds up the application especially the startup because templates are alrea
 
 > This article has been written after some very insightful conversations with [Carmen Popoviciu](https://twitter.com/carmenpopoviciu?lang=de). She pointed out issues regarding AOT and Tree Shaking and helped me to discover them and their origins.
 
-## The most ovious: EcmaScript Modules
+## The most obvious: EcmaScript Modules
 
 Let's start here with the most ovious and least surprising fact: You need sources based on EcmaScript 2015 for tree shaking. At least you need to use EcmaScript Modules introduced with EcmaScript 2015. Those modules use the well known ``import`` and ``export`` statements which allow for a static code analysis which is the foundation for finding unused code.  
 
