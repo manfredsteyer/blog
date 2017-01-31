@@ -1,4 +1,4 @@
-# AOT and Tree Shaking with Angular, webpack2 and/or rollup: Step by Step
+# AOT and Tree Shaking with Angular, webpack2 and/or Rollup: Step by Step
 
 *Updated in January 2017*: After very good conversations with [Carmen Popoviciu](https://twitter.com/carmenpopoviciu?lang=de), I've updated this article to strike out some important facts and to also explain *why* the steps described here are necessary. 
 
@@ -13,25 +13,25 @@ I'm subdividing this writing into two parts:
 
 ## Motivation
 
-In order to improve performance, Angular compiles templates into TypeScript code. The easiest solution for this is Just in Time (JIT) compilation which for instance takes happen after downloading the files into the browser. To speed up the program start, one can also compile the templates during the build which is called Ahead of Time (AOT) compilation. Thanks to this, we don't need to include the sources of the Angular Compiler into our build which reduces the parts of Angular that need to be loaded into the browser.  
+In order to improve performance, Angular compiles templates into TypeScript code. The easiest solution for this is Just in Time (JIT) compilation which is performed in the browser, after all the application files are downloaded. To speed up the program start, one can also compile the templates at build time, which is called Ahead of Time (AOT) compilation. Thanks to this, we don't need to include the sources of the Angular Compiler into our build which reduces the parts of Angular that need to be loaded into the browser and ultimately the size of the bundle.  
 
 As the generated TypeScript code can be statically analyzed, it it possible to find out which parts of Angular or other libraries aren't used. This is where tools for tree shaking like [webpack2](https://webpack.js.org) or [rollup](http://rollupjs.org) come into play. Those tools try to remove the unused code or to put it in another they: They are "shaking off" the loose branches of your source code. 
 
-This post shows how to use the two mentioned techniques by describing an [example](https://github.com/manfredsteyer/angular-aot) which can found in my [GitHub repository](https://github.com/manfredsteyer/angular-aot).
+This post shows how to use the two mentioned techniques by describing an [example](https://github.com/manfredsteyer/angular-aot) which can be found in my [GitHub repository](https://github.com/manfredsteyer/angular-aot).
 
 ## Configuration
 
-To demonstrate the usage of AOT and tree shaking, this post first of all uses the Angular Compiler to compile the templates to TypeScript. After this, it also compiles this TypeScript code together with the application's TypeScript code down to EcmaScript 5. To enable tree shaking, this samples uses EcmaScript 5 together with the module system of EcmaScript 2015 that defines the well known ``import`` and ``export`` statements. These statements allow for a static code analysis to find unused code and is the foundation for tree shaking tools:
+To demonstrate the usage of AOT and tree shaking, the example in this post first uses the Angular Compiler to compile the application templates to TypeScript. After that, it compiles the previously generated TypeScript code together with the rest of the application's TypeScript code down to EcmaScript 5. To enable tree shaking, this sample uses EcmaScript 5 together with the module system of EcmaScript 2015 that defines the well known ``import`` and ``export`` statements. These statements enable static code analysis to find unused code and are the foundation for tree shaking tools:
 
 ![AOT process](http://i.imgur.com/qgmifSO.png)
 
-Then, the sample uses rollup or webpack2 to perform tree shaking. These tools can also be configured to use UglifyJS to minimize the resulting bundles. At the time of writing, UglifyJS can only deal with EcmaScript 5 which is one reason for converting the code into this version. Another reason for transpiling the code down to EcmaScript 5 is that currently webpack is not supporting a newer version. A third reason is, that currently most libraries are available as EcmaScript 5 files. Fortunately, EcmaScript 5 can be used together with EcmaScript 2015 modules which is the foundation for tree shaking.  
+Once all these steps are completed, the sample uses Rollup or webpack2 to perform tree shaking. These tools can also be configured to use UglifyJS to minimize the resulting bundles. At the time of writing, UglifyJS can only deal with EcmaScript 5 which is one reason for converting the code to this version. Another reason for transpiling the code down to EcmaScript 5 is that currently webpack does not support a newer version. A third reason is, that currently most libraries are available as EcmaScript 5 files. Fortunately, EcmaScript 5 can be used together with EcmaScript 2015 modules which is the foundation for tree shaking.  
 
-As mentioned [here](http://link-to-other-article), using EcmaScript 2015 or higher at this point would lead to better results as it provides more ways for a static analysis. The result of webpack2's or rollup's work is a tree shaked and minified bundle.
+As mentioned [here](http://link-to-other-article), using EcmaScript 2015 or higher at this point would lead to better results as it provides more ways for static analysis. The result of webpack2's or Rollup's work is a tree shaken and minified bundle.
 
 ## Refactoring
 
-As AOT compilation does not allow for dynamic references, using ``require`` is not possible. However, thanks to the ``angular2-template-loader`` for Webpack which lines in the templates and styles for components, we can use relative references in JIT mode anyway. In addition to that, the AOT compiler also supports relative paths:
+As AOT compilation does not allow for dynamic references, using ``require`` is not possible. However, thanks to the ``angular2-template-loader`` for Webpack, which inlines templates and styles in Angular components, we can use relative references in JIT mode anyway. In addition to that, the AOT compiler also supports relative paths:
 
 ```
 @Component({
@@ -44,14 +44,14 @@ export class FlugSuchenComponent {
 }
 ```
 
-As this sample shows, the compiler is more strict when using AOT. That might lead to some errors when compiling. Using the feedback we get from the compilation errors, we can fix our code. [Oliver Combe](https://github.com/ocombe), the author of the popular [ng2-translate](https://github.com/ocombe/ng2-translate) library, created a nice [list with things that don't work with the AOT Compiler](https://github.com/mgechev/codelyzer/issues/215). Additional information can be found [here](https://gist.github.com/chuckjaz/65dcc2fd5f4f5463e492ed0cb93bca60).
+As this sample shows, the compiler is more strict when using AOT, which might lead to some errors when compiling. Using the feedback we get from the compilation errors, we can fix our code. [Oliver Combe](https://github.com/ocombe), the author of the popular [ng2-translate](https://github.com/ocombe/ng2-translate) library, created a nice [list with things that don't work with the AOT Compiler](https://github.com/mgechev/codelyzer/issues/215). Additional information can be found [here](https://gist.github.com/chuckjaz/65dcc2fd5f4f5463e492ed0cb93bca60).
 
-To provide instant feedback during the development, we can leverage the Angular Language Service that has been introduced with Angular 2.3. It targets editors and IDE and helps them to provide Angular specific feedback and code completion for both, typescript files as well as templates. At the time of writing, the upcoming version of WebStorm supports this and there is a preview of a plugin that makes the language service available for Visual Studio Code. 
+To provide instant feedback during the development, we can leverage the Angular Language Service that has been introduced with Angular 2.3. It targets editors and IDEs and helps them provide Angular specific feedback and code completion for both typescript files and templates. At the time of this writing, the upcoming version of WebStorm (TODO: state version) supports this and there is a preview of a plugin that makes the language service available for Visual Studio Code.(TODO: which plugin?) 
 
 
 ## Packages
 
-In order to work with AOT compilation as well as with [Webpack2](https://webpack.github.io/) and [Rollup](http://rollupjs.org), one has to install several packages. The next listing contains some dev-dependencies I've used for this:
+In order to work with AOT compilation as well as with [Webpack2](https://webpack.github.io/) and [Rollup](http://rollupjs.org) treeshaking, one has to install several packages. The next listing contains some dev-dependencies I've used for this:
 
 ```
     "angular2-template-loader": "^0.6.0",
@@ -79,7 +79,7 @@ We also need the ``compiler-cli`` and ``plattform-server`` as a dependency:
 	"@angular/platform-server": "~2.4.0",
 ```
 
-The [full list of dev-dependencies](https://github.com/manfredsteyer/angular-aot) can be found in my [sample at GitHub](https://github.com/manfredsteyer/angular-aot).
+The [full list of dev-dependencies](https://github.com/manfredsteyer/angular-aot) can be found in my [GitHub sample](https://github.com/manfredsteyer/angular-aot).
 
 ## tsconfig.json
 
@@ -108,19 +108,19 @@ The AOT compiler uses its own ``tsconfig.json``-file. According to the docs, I'v
 }
 ```
 
-As mentioned above, it's important to use the target ``es5`` together with the module format ``es2015`` to make tree shaking possible. The property ``genDir`` within ``angularCompilerOptions`` defines, where the template compiler should place the files it generated out of HTML files. The sample is also skipping the generation of metadata for the AOT Compiler as this is only needed for reusable libraries. 
+As mentioned above, it's important to use target ``es5`` together with the module format ``es2015`` to make tree shaking possible. The property ``genDir`` within ``angularCompilerOptions`` defines where the template compiler should place the files it generated out of HTML files. The sample is also skipping the generation of metadata for the AOT Compiler as this is only needed for reusable libraries. 
 
-The property ``outDir`` defines that the resulting ES5 files should be placed in the folder ``dist/unbundled-aot``. Wepack2 and rollup will use this folder.
+The property ``outDir`` defines that the resulting ES5 files should be placed in the folder ``dist/unbundled-aot``. Wepack2 and Rollup will use this folder.
 
 ## Compiling the templates
 
-The following npm script I've set up within ``package.json`` compiles the HTML templates and creates TypeScript files for it. In addition, it also compiles everything down to ES5 afterwards:
+The following npm script in ``package.json`` compiles the HTML templates and creates TypeScript files for it. In addition, it also compiles everything down to ES5 afterwards:
 
 ```
 "ngc": "ngc -p tsconfig.aot.json",
 ```
 
-To start this script, one has to use ``npm run ngc``.
+To start this script, simply run ``npm run ngc`` in your terminal.
 
 
 ## Bootstrapping for AOT
@@ -144,7 +144,7 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory).catch(err => consol
 
 ## Webpack2 Configuration for AOT
 
-The next listing shows the (simple) webpack2 configuration I'm using for the AOT sample. It is pointing to two entry points within the folder ``dist/unbundled-aot``. One of them referenced to the necessary polyfills and the other one points to the compiled version of the above described ``main.aot.ts``:
+The next listing shows the (simple) webpack2 configuration I'm using for the AOT sample. Notice the two entry points within the ``dist/unbundled-aot`` folder: the first points to the necessary polyfills and the second to the compiled version of the above described ``main.aot.ts``:
 
 
 ```
@@ -218,7 +218,7 @@ The plugins ``LoaderOptionsPlugin`` and ``UglifyJsPlugin`` reduce the bundle siz
 
 ## Webpack2 Configuration for JIT
 
-I've also created a JIT based build. This build I'm using during development because it is much faster than an AOT based build. In principle, the webpack configuration for this looks like the one for AOT. But its entry point ``app`` points to the file ``main.jit.ts`` which is using Angular's JIT-compiler. Another difference is that it is using the ``angular2-template-loader`` which inlines component templates. In addition to that, it takes care of compiling TypeScript leveraging the ``awesome-typescript-loader``.
+I've also created a JIT-based build. This build is used during development because it is much faster than an AOT-based build. The JIT webpack configuration is very similar to the one for AOT, with a couple of exceptions. The first difference is that the ``app`` entry points to the ``main.jit.ts`` file, which uses Angular's JIT-compiler to bootstrap the application. The second difference is that it uses the ``angular2-template-loader`` loader for inlining component templates and ``awesome-typescript-loader`` for compiling TypeScript.
 
 ```
 [...]
@@ -295,7 +295,7 @@ module.exports = {
 
 ## Rollup Configuration for AOT
 
-To find out, whether rollup brings improvements over just using webpack2, I've used the rollup configuration of the [cookbook for AOT and rollup from angular.io](https://angular.io/docs/ts/latest/cookbook/aot-compiler.html):
+To find out whether Rollup brings improvements over just using webpack2, I've used the Rollup configuration of the [cookbook for AOT and Rollup from angular.io](https://angular.io/docs/ts/latest/cookbook/aot-compiler.html):
 
 ```
 // rollup.config.js
@@ -339,7 +339,7 @@ To build the solution for all three scenarios, I'm using the following npm scrip
 "rollup:aot": "ngc -p tsconfig.aot.json && rollup -c rollup.js",
 ```
 
-The command ``npn run build-all`` is starting all three builds.   
+The command ``npn run build-all`` will start all three builds.   
 
 ## Results
 
@@ -359,7 +359,7 @@ When it comes to AOT mode, the bundle could be reduced:
 polyfills.js.gz  33.5 kB          [emitted]
       app.js.gz   112 kB          [emitted]
 
-The AOT bundle created with rollup was even smaller: 
+The AOT bundle created with Rollup was even smaller: 
 
 ```
 	470.978 build.js
@@ -373,5 +373,5 @@ After gzipping it, the resulting file took 94 kB:
 
 ## Starting the samples
 
-To start the three samples, I've created three HTML files: ``index.jit.html`` for the JIT mode, ``index.aot.html`` for the AOT base code build with webpack bundles and ``index.rollup.aot.html`` for its counterpart build with rollup. Those files are also included in the provided sample.
+To start the three samples, I've created three HTML files: ``index.jit.html`` for the JIT mode, ``index.aot.html`` for the AOT codebase build with webpack bundles and ``index.rollup.aot.html`` for its counterpart build with Rollup. Those files are also included in the provided sample.
 
