@@ -15,7 +15,7 @@ I'm subdividing this writing into two parts:
 
 In order to improve performance, Angular compiles templates into TypeScript code. The easiest solution for this is Just in Time (JIT) compilation which is performed in the browser, after all the application files are downloaded. To speed up the program start, one can also compile the templates at build time, which is called Ahead of Time (AOT) compilation. Thanks to this, we don't need to include the sources of the Angular Compiler into our build which reduces the parts of Angular that need to be loaded into the browser and ultimately the size of the bundle.  
 
-As the generated TypeScript code can be statically analyzed, it it possible to find out which parts of Angular or other libraries aren't used. This is where tools for tree shaking like [webpack2](https://webpack.js.org) or [Rollup](http://rollupjs.org) come in. Those tools try to remove the unused code or to put it in another way, they are "shaking off" the loose branches of your source code. 
+As the generated TypeScript code can be statically analyzed, it it possible to find out which parts of Angular or other libraries aren't used. This is where tools for tree shaking like [webpack2](https://webpack.js.org) or [rollup](http://rollupjs.org) come into play. Those tools try to remove the unused code or to put it in another they: They are "shaking off" the loose branches of your source code. 
 
 This post shows how to use the two mentioned techniques by describing an [example](https://github.com/manfredsteyer/angular-aot) which can be found in my [GitHub repository](https://github.com/manfredsteyer/angular-aot).
 
