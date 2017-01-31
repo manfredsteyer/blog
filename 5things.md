@@ -6,20 +6,20 @@ AOT speeds up the application especially the startup because templates are alrea
 
 ## The most obvious: EcmaScript Modules
 
-Let's start here with the most ovious and least surprising fact: You need sources based on EcmaScript 2015 for tree shaking. At least you need to use EcmaScript Modules introduced with EcmaScript 2015. Those modules use the well known ``import`` and ``export`` statements which allow for a static code analysis which is the foundation for finding unused code.  
+Let's start here with the most obvious and least surprising fact: You need sources based on EcmaScript 2015 for tree shaking. At least you need to use EcmaScript Modules introduced with EcmaScript 2015. Those modules use the well known ``import`` and ``export`` statements which allow for a static code analysis which is the foundation for finding unused code.  
 
-It is possible to use a combination of EcmaScript 5 and EcmaScript Modules to support a wider range of tools like webpack 2 which - at the time of writing - does not support EcmaScript 2015 but leverages ``import`` and ``export`` statements for tree shaking. 
+It is possible to use a combination of EcmaScript 5 and EcmaScript Modules to support a wider range of tools like webpack 2 which - at the time of this writing - does not support EcmaScript 2015 but leverages ``import`` and ``export`` statements for tree shaking. 
 
-Currently, the product team ships the Angular modules using this exact combination (besides additional UMD bundles). As the next section shows, this brings also a drawback as there are some limitations when it comes to analyzing EcmaScript 5 code for tree shaking.   
+Currently, the product team ships the Angular modules using this exact combination (besides additional UMD bundles). As the next section shows, this has a drawback, as there are some limitations when it comes to analyzing EcmaScript 5 code for tree shaking.   
 
 
 ## Current Limitations for Tree Shaking
 
-Examples for Tree Shaking clearly show that it brings benefits in terms of file size. But at the time of writing, there is much room for improvement. This mostly has to do with the fact that tools for tree shaking like rollup and webpack2 cannot make sure in every situation that removing unused code is safe. This is especially the case in situations, where this code could introduce side effects like changing a global variable. Therefore, those tools don't remove as many code as possible. 
+Examples for Tree Shaking clearly show that it brings benefits in terms of file size. But at the time of this writing, there is much room for improvement. This mostly has to do with the fact that tools for tree shaking like Rollup and webpack2 cannot guarantee for every situation that removing unused code is safe. This is especially the case in situations where the code could introduce side effects, like changing a global variable. Therefore, these tools don't remove as much code as possible. 
 
-As a matter of fact, this fact holds true for the method ``Object.defineProperty``, which mutates the first passed object. Unfortunately, this very method is used when transpiling class members down to EcmaScript 5 and therefore affects several parts of Angular as well as Libraries like Angular Material.
+As a matter of fact, this holds true for the ``Object.defineProperty`` method, which mutates the first passed object. Unfortunately, this very method is used when transpiling class members down to EcmaScript 5 and therefore affects several parts of Angular as well as libraries like Angular Material.
 
-One can find such parts of the code by activating the output of warnings within the webpack configuration for instance. This makes UglifyJS to list every part of the bundle which it doesn't remove because of the mentioned reason:
+One can find such parts of code by activating output warning within the webpack configuration for instance. This makes UglifyJS list every part of the bundle which it doesn't remove because of the mentioned reason:
 
 ```
 new webpack.optimize.UglifyJsPlugin({
@@ -33,7 +33,7 @@ new webpack.optimize.UglifyJsPlugin({
 }),
 ```
 
-Another interesting experiment is to import a library like Angular Material into the ``AppModule`` without using it at all. Normally, one would expect that it is tree shaken off but for the reason discussed here this leads to a bigger bundle. 
+Another interesting experiment is to import a library like Angular Material into the ``AppModule`` without using it at all. Normally, one would expect that it is tree shaken but for the reason discussed here this leads to a bigger bundle. 
 
 Further information about this can be found inside the issues of [webpack](https://github.com/webpack/webpack/issues/2867) and [rollup](https://github.com/rollup/rollup/issues/1130).
 
@@ -47,7 +47,7 @@ As we found out, there is also an issue when using the AOT compiler together wit
 
 ## Libraries need to support AOT and Tree Shaking
 
-In order to shake unused code of libraries off and to use them with AOT, they also have to support it. This not only means that they have to provide the code using EcmaScript Modules. They also have to provide some meta data, especially meta data for Angular's AOT compiler.
+In order to shake unused code off from libraries and to use them with AOT, they also have to support it. This not only means that they have to provide the code using EcmaScript Modules. They also have to provide some meta data, especially meta data for Angular's AOT compiler.
 
-No one less than [Minko Gechev](http://blog.mgechev.com/2017/01/21/distributing-an-angular-library-aot-ngc-types/) wrote a wonderful [article](http://blog.mgechev.com/2017/01/21/distributing-an-angular-library-aot-ngc-types/) about this. At the end, it also provides a check list with all the things one should consider. 
+None other than [Minko Gechev](http://blog.mgechev.com/2017/01/21/distributing-an-angular-library-aot-ngc-types/) wrote a wonderful [article](http://blog.mgechev.com/2017/01/21/distributing-an-angular-library-aot-ngc-types/) about this. At the end, it also provides a check list with all the things one should consider. 
 
